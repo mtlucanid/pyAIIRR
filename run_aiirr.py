@@ -17,15 +17,15 @@ for i in range(1, 3):
     results = aiirr.compute_aiirr(
         img_file=f"{filebody}.jpg", 
         mask_file=f"{filebody}.png",
-        region_select=aiirr.SELECT_LIGHTER,
+        region_select=aiirr.SELECT_DARKER,
         num_gaussian_filters=25,
         shake_amplitude=20,
-        shake_aspect_ratio=0,
-        shake_deflection_angle=0,        
+        #shake_aspect_ratio=1,
+        #shake_deflection_angle=0,        
         num_bootstrap_iterations=100,
         animation=True,
         animation_wait=100,
-        console=False,
+        #console=False,
     )
     print(f"Input image file                : {filebody}.jpg")
     print(f"Mean Area Integrity Index (AII) : {results['mean_aii']:.4f}")

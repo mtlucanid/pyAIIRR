@@ -61,7 +61,7 @@ import sys
 import math
 import random
 import numpy as np
-from screeninfo import get_monitors
+import imagehelper as ih
 
 ##########################################################
 ## Constants (*which does not need to change frequently)
@@ -154,8 +154,8 @@ def compute_aiirr(
 
     # -> Start animation
     if animation:
-        imshow_init(img)
-        imshow(img, animation_wait * 10)
+        ih.imshow_init(img)
+        ih.imshow(img, animation_wait * 10)
 
     # 2. Mask handling
     if mask is None:
@@ -203,7 +203,7 @@ def compute_aiirr(
 
     # -> Show the animation
     if animation:
-        imshow(binary_pattern, animation_wait * 10)
+        ih.imshow(binary_pattern, animation_wait * 10)
 
     # 7. Pre-blur filtering
     blurred_img = binary_pattern.copy()
@@ -343,12 +343,12 @@ def compute_aiirr(
                 output_img[labels == label] = color_bgr
 
             # Show the colored output
-            imshow(output_img, animation_wait)
+            ih.imshow(output_img, animation_wait)
 
     # -> Finish the output after waiting for a while
     if animation:
-        imshow_wait(animation_wait * 10)
-        imshow_exit()
+        ih.imshow_wait(animation_wait * 10)
+        ih.imshow_exit()
 
     # 18. Summarize final metrics
     mean_aii = float(np.mean(aii_list))
@@ -382,43 +382,6 @@ def compute_aii(num_labels: int, labels: np.ndarray):
     # Returns
     return area_total, nregions, rss_total, rss_within, aii
 
-###########################################
-## Helper functions for image outputs
-def imshow_init(img):
-    """Prepare a fixed-sized window to show animations"""
-    # Close previous windows
-    cv2.destroyAllWindows()
-    # Fetch the primary monitor's resolution
-    monitor = get_monitors()[0]
-    screen_width = monitor.width
-    screen_height = monitor.height
-    height, width = img.shape
-    # Resize the image so that it does not exceed the screen size
-    if width > screen_width:
-        scale = screen_width / width
-        width *= scale
-        height *= scale
-    if height > screen_height:
-        scale = screen_height / height
-        width *= scale
-        height *= scale
-    # Precreate the named window with a fixed size (to avoid window flashing)
-    width = int(width)
-    height = int(height)
-    cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Image", width, height)
-
-def imshow(img, wait):
-    cv2.imshow("Image", img)
-    if wait > 0:
-        cv2.waitKey(wait)
-
-def imshow_wait(wait):
-    if wait > 0:
-        cv2.waitKey(wait)
-
-def imshow_exit():
-    cv2.destroyAllWindows()
 
 ############################################
 ## Helper functions for stats

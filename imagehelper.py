@@ -1,6 +1,15 @@
+#
+# imagehelper.py
+#
+#  Helper module for image window output
+#
+#  Copyright (C) 2026, Masahiko TANAHASHI
+#
 import cv2
 from screeninfo import get_monitors
 
+###########################################
+## Constants
 IMSHOW_MIN_WINDOW_SIZE = 160
 
 ###########################################
