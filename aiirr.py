@@ -6,7 +6,7 @@
 #
 #   Copyright (C) 2026, Masahiko Tanahashi
 #
-#   Last modified: 18 Aug 2026
+#   Last modified: 27 Aug 2026
 #   First release: xx Aug 2026
 #
 #   E-mail: m.tanahashi.lucanid@gmail.com
@@ -29,32 +29,19 @@
 # ------------------------------------------------------------------------
 #
 # The latest version of this file will be avairable from GitHub repository of the author:
-#  https://github.com/mtlucanid/AIIRR_python
+#    https://github.com/mtlucanid/pyAIIRR
 #
-# Before use, please install Python libraries from the command shell:
-#  $ pip install numpy opencv-python screeninfo
+# Before use, please install required Python libraries from the command shell:
+#    $ pip install numpy opencv-python screeninfo
 #
-# Example Usage (see also 'run_aiirr.py'):
-# [Create 'YOUR_PYTHON_FILE.py' under the same path of 'aiirr.py' and type the following code]
-#   import aiirr
-#   results = compute_aiirr(
-#       img_file = "your_image.jpg",
-#       mask_file = "your_mask_pattern.png",
-#       select_darker_pixel = True,
-#       num_gaussian_filters = 25,
-#       shake_amplitude = 20,
-#       num_bootstrap_iterations = 50,
-#   )
-#   print(f"Mean Area Integrity Index (AII): {results['mean_aii']:.4f}")
-#   print(f"Average Regions: {results['mean_nregions']:.1f}")
+# For an example of using this module, see 'run_aiirr.py' in the pyAIIRR repository.
 #
 # For the details of AIIRR, please refer to our original papers:
-#  Tanahashi M, Lin M-C, Lin C-P (2025). Area Integration Index with Random Rearrangement
-#     (AIIRR): a new concept for quantifying disruptive colorations. Methods in Ecology
-#     and Evolution, 16(8), 1781–1795. https://doi.org/10.1111/2041-210X.70085
-#
-#  Tanahashi M, Huang J-P (2026). pyAIIRR: A Python program for Area Integration Index with
-#     Random Rearrangement (AIIRR). To be submitted to XXX.
+#    Tanahashi M, Lin M-C, Lin C-P (2025). Area Integration Index with Random Rearrangement
+#       (AIIRR): a new concept for quantifying disruptive colorations. Methods in Ecology
+#       and Evolution, 16(8), 1781–1795. https://doi.org/10.1111/2041-210X.70085
+#    Tanahashi M, Huang J-P (2026). pyAIIRR: A Python implement for Area Integration Index with
+#       Random Rearrangement (AIIRR). To be submitted to Bioinfomatics.
 
 import cv2
 import sys
@@ -133,8 +120,10 @@ def compute_aiirr(
     Returns:
     --------
     dict containing:
-        mean_aii      : Mean AII value across iterations (Range: 0 to 1)
-        mean_nregions : Average number of valid separated regions
+        mean_aii          : Mean AII value across iterations (Range: 0 to 1).
+        mean_region_count : Mean number of separate regions across iterations.
+        aii_values        : A numpy array of AII values in each iteration.
+        region_counts     : A numpy array of the numbers of separate regions in each iteration.
     """
 
     # 0. Initialize the random seed
@@ -172,11 +161,7 @@ def compute_aiirr(
     # 3. Area and RSS of the entire ROI
     _y, _x = np.where(mask != 0)
     if len(_x) == 0:
-        return {
-            "aiirr_mean_aii": None,
-            "aiirr_disruption_score": None,
-            "mean_num_regions": 0,
-        }
+        raise ValueError("The mask has no foreground region")
     area_roi = len(_x)
     rss_roi = compute_rss(_y, _x)
 
@@ -351,10 +336,11 @@ def compute_aiirr(
         ih.imshow_exit()
 
     # 18. Summarize final metrics
-    mean_aii = float(np.mean(aii_list))
     return {
-        "mean_aii"      : mean_aii,
-        "mean_nregions" : float(np.mean(nregion_list)),
+        "mean_aii"          : float(np.mean(aii_list)),
+        "mean_region_count" : float(np.mean(nregion_list)),
+        "aii_values"        : aii_list,
+        "region_counts"     : nregion_list,
     }
 
 ##############################################################
