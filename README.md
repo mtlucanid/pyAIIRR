@@ -10,12 +10,12 @@ Python implement for computation of Area Integuity Index for Random Rearrangemen
 
 - numpy
 - cv2 (OpenCV for Python)
-- screeninfo (optional, used in imagehelper.py)
+- screeninfo (optional, used in `imagehelper.py`)
 
 ## This repository contains
 * aiirr.py
 
-  The main python module for AIIRR computation. You can import this module in your python code and call the compute_aiirr() function, as follows:
+  The main python module for AIIRR computation. You can import this module in your python code and call `compute_aiirr()` function, as follows:
   ```python
   import aiirr # be sure that 'aiirr.py' exists in your project folder
   results = aiirr.compute_aiirr(
@@ -38,7 +38,7 @@ Python implement for computation of Area Integuity Index for Random Rearrangemen
   A helper module for the graphical output of AIIRR process.
 * run_aiirr.py
   
-  A sample code to use aiirr module.
+  A sample code to use `aiirr` module.
 * 01.jpg
   
   A sample image
