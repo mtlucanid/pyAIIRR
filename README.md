@@ -41,10 +41,10 @@ Python implement for computation of Area Integuity Index for Random Rearrangemen
   A sample code to use `aiirr` module.
 * 01.jpg / 02.jpg
   
-  Sample images
+  Sample images (insect specimen photographs).
 * 01.png / 02.png
   
-  Sample mask images (binary masks)
+  Sample mask images (binary masks to specify the foreground regions).
 
 ## See also
 * Original publication of AIIRR
