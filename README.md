@@ -1,12 +1,16 @@
 # pyAIIRR
 
-Python implement for Area Integuity Index for Random Rearrangement (AIIRR)
+Python implement for computation of Area Integuity Index for Random Rearrangement (AIIRR)
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.1+
+
+## Package requirements
+
 - numpy
 - cv2 (OpenCV for Python)
+- screeninfo (optional, used in imagehelper.py)
 
 ## This repository contains
 * aiirr.py
