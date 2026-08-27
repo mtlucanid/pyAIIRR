@@ -45,3 +45,7 @@ Python implement for computation of Area Integuity Index for Random Rearrangemen
 * 01.png
   
   A sample mask image (binary mask)
+
+## See also
+https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.70085   (the original publication of AIIRR)
+https://github.com/mtlucanid/AIIRR/  (the original AIIRR program, for Windows)
