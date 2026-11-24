@@ -59,8 +59,8 @@ for i in range(N_FILES):
     
     # Compute AIIRR
     results = aiirr.compute_aiirr(
-        img_file=img_file, 
-        mask_file=mask_file,
+        img_file=img_file,   # an image containing the foreground object 
+        mask_file=mask_file, # a mask image to specify the outlines of the object
         region_select=aiirr.SELECT_DARKER,
         num_gaussian_filters=25,
         shake_amplitude=20,
