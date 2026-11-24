@@ -4,7 +4,7 @@ Python implement for computation of Area Integrity Index for Random Rearrangemen
 
 ## Requirements
 
-- Python 3.1+
+- Python 3.4+
 
 ## Package requirements
 
