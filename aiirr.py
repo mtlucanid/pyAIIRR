@@ -6,12 +6,12 @@
 #
 #   Copyright (C) 2026, Masahiko Tanahashi
 #
-#   Last modified: 27 Aug 2026
-#   First release: xx Aug 2026
+#   Last modified: 24 Nov 2026
+#   First release: 16 Aug 2026
 #
 #   E-mail: m.tanahashi.lucanid@gmail.com
 #
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://gnu.org>.
 #
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # The latest version of this file will be avairable from GitHub repository of the author:
 #    https://github.com/mtlucanid/pyAIIRR
@@ -36,13 +36,26 @@
 #
 # For an example of using this module, see 'run_aiirr.py' in the pyAIIRR repository.
 #
+# -----------------------------------------------------------------------------
+#
 # For the details of AIIRR, please refer to our original papers:
+#
 #    Tanahashi M, Lin M-C, Lin C-P (2025). Area Integration Index with Random Rearrangement
 #       (AIIRR): a new concept for quantifying disruptive colorations. Methods in Ecology
 #       and Evolution, 16(8), 1781–1795. https://doi.org/10.1111/2041-210X.70085
-#    Tanahashi M, Huang J-P (2026). pyAIIRR: A Python implement for Area Integration Index with
-#       Random Rearrangement (AIIRR). To be submitted to Bioinfomatics.
-
+#
+#    Tanahashi M, Huang J-P (2026). pyGabRat and pyAIIRR: Python implements for the 
+#       quantification of disruptive camouflage patterns To be submitted to Bioinfomatics.
+#
+# -----------------------------------------------------------------------------
+#
+# Version History:
+#
+# 2026/08/16: First deposited version on GitHub.
+# 2026/08/27: Minor update.  
+# 2026/11/24: Image data type of uint16, float32, and float64 are avairable
+#             for input (internal computation uses uint8).
+#
 import cv2
 import sys
 import math
@@ -50,16 +63,24 @@ import random
 import numpy as np
 import imagehelper as ih
 
-##########################################################
-## Constants (*which does not need to change frequently)
-MASK_THRESHOLD = 127     # When mask is a grayscale image, pixels less than this will be treated as zero (default: 127) 
-OUTER_GREY_VALUE = 127   # Paint outside ROI in this color (default: 127)
-GAUSSIAN_FILTER_SIZE = 5 # Size of Gaussian filter (default: 5)
-NOISE_THRESHOLD = 0.001  # Ignore small region less than [area_roi * NOISE_THRESHOLD] (default: 0.001)
-                         #  Use 0 (or None) will improve the calculation speed
+########################################################################
+# Precisions for the internal calculations
+IMG_DATATYPE = np.uint8  # DO NOT CHANGE!!!
+MASK_DATATYPE = np.uint8 # DO NOT CHANGE!!!
+
+# Automatically generated constants (DO NOT CHANGE!!!)
+IMG_DATA_MAX = np.iinfo(IMG_DATATYPE).max if np.issubdtype(IMG_DATATYPE, np.integer) else 1.0 # 255 for uint8 and 1.0 for float32
+MASK_DATA_MAX = np.iinfo(MASK_DATATYPE).max # 255 for uint8
+MASK_THRESHOLD = np.dtype(MASK_DATATYPE).type(MASK_DATA_MAX / 2) # Half of the max value, casting to the target type
 
 ##########################################################
-## Enumerative Constants
+## Constants (no need to change frequently)
+OUTER_GREY_VALUE = MASK_THRESHOLD # Paint outside ROI in this color (default: 127 when using uint8)
+GAUSSIAN_FILTER_SIZE = 5          # Size of Gaussian filter (default: 5)
+NOISE_THRESHOLD = 0.001           # Ignore small region less than [area_roi * NOISE_THRESHOLD] (default: 0.001)
+                                  #  Use 0 (or None) will improve the calculation speed
+##########################################################
+## Enumerative Constants (DO NOT CHANGE!!!)
 SELECT_LIGHTER = 0
 SELECT_DARKER = 1
 SELECT_BOTH = 2
@@ -130,33 +151,24 @@ def compute_aiirr(
     if random_seed is not None:
         random.seed(random_seed)
 
-    # 1. Load image in grayscale
-    if img is None:
-        # cv2.imread() with cv2.IMREAD_GRAYSCALE flag returns a numpy.ndarray
-        # with the data type (dtype) of numpy.uint8 (0 to 255)
-        img = cv2.imread(img_file, cv2.IMREAD_GRAYSCALE)
-        if img is None:
-            raise FileNotFoundError(f"Could not load image at {img_file}")
+    # 1. Load images in grayscale
+    img = ih.read_image(img_file, img, dtype=IMG_DATATYPE, gray=True, auto_range=True)
+    mask = ih.read_image(mask_file, mask, dtype=MASK_DATATYPE, gray=True, auto_range=True, allow_none=True)
+
+    ih.debug(img, 1000)
+    ih.debug(mask, 1000)
+
+    # 2. Mask handling
+    if mask is None:
+        mask = np.full_like(img, MASK_DATA_MAX, MASK_DATATYPE)
     else:
-        if img_file is not None:
-            print(f"Ignoring img_file={img_file} as img is specified")
+        # cv2.threshold() returns a np.ndarray of the same type of input array (np.uint8)     
+        _, mask = cv2.threshold(mask, MASK_THRESHOLD, MASK_DATA_MAX, cv2.THRESH_BINARY)
 
     # -> Start animation
     if animation:
         ih.imshow_init(img)
         ih.imshow(img, animation_wait * 10)
-
-    # 2. Mask handling
-    if mask is None:
-        if mask_file is not None:
-            mask = cv2.imread(mask_file, cv2.IMREAD_GRAYSCALE)
-
-    if mask is None:
-        mask = np.full_like(img, 255, np.uint8)
-    else:
-        # cv2.threshold() returns a np.ndarray of the same type of input array (np.uint8)     
-        _, mask = cv2.threshold(mask, MASK_THRESHOLD, 255, cv2.THRESH_BINARY)
-      
 
     # 3. Area and RSS of the entire ROI
     _y, _x = np.where(mask != 0)

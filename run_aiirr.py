@@ -3,13 +3,36 @@
 #
 #  Example of using the aiirr module (aiirr.py)
 #
-# Last modified: 27 Aug 2026; by Masahiko TANAHASHI
+# Last modified: 24 Nov 2026; by Masahiko TANAHASHI
+#
+# -------------------------------------------------------
+# Requirements:
+#  Python 3.4+
+#
+# Required libraries:
+#  numpy
+#  cv2 ('opencv-python')
+#  screeninfo
+#  tifffile (optional)
+#  imagecodecs (optional)
+#
+# [Notes]
+# Please install the required libraries by:
+#   pip install numpy opencv-python screeninfo
+#
+# To open a certain advanced types of TIFF images, you may require an additional installation of 
+# 'tifffile' and 'imagecodecs' libraries. To install all the dependencies, use following commands: 
+#   pip install "tifffile[all]"
+# or,
+#   pip install tifffile imagecodecs
+# -------------------------------------------------------
 
 import aiirr
 
 ##########################################################################
-# It is recommended to set these pseudo-constant values ​​to their default,
+# It is recommended to leave these pseudo-constant values ​​to their default,
 # but you can change them by uncommenting either of the follwing lines.
+# Please also see the comment in 'aiirr.py'.
 #
 # aiirr.MASK_THRESHOLD = 127      # When mask is a grayscale image, pixels less than this will be treated as zero (default: 127).
 # aiirr.OUTER_GREY_VALUE = 127    # Paint outside ROI in this color (default: 127).
