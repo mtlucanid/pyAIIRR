@@ -11,10 +11,12 @@ Python implement for computation of Area Integrity Index for Random Rearrangemen
 - numpy
 - cv2 (OpenCV for Python)
 - screeninfo (optional, used in `imagehelper.py`)
+- tifffile (optional, required for some advanced TIFF formats)
+- imagecodecs (optional, required for some advanced TIFF formats)
 
 For installation of those packages, please run the following command on your terminal (for debian or ubuntu):
 ```console
-$ pip install numpy opencv-python screeninfo
+$ pip install numpy opencv-python screeninfo tifffile imagecodecs
 ```
 ## This repository contains
 * aiirr.py
@@ -23,8 +25,8 @@ $ pip install numpy opencv-python screeninfo
   ```python
   import aiirr # be sure that 'aiirr.py' exists in your project folder
   results = aiirr.compute_aiirr(
-    img_file="01.jpg", 
-    mask_file="01.png",
+    img_file=img_file,   # an image containing the foreground object 
+    mask_file=mask_file, # a mask image to specify the outlines of the object
     region_select=aiirr.SELECT_DARKER,
     num_gaussian_filters=25,
     shake_amplitude=20,
